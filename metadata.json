@@ -1,0 +1,9 @@
+{
+  "name": "Wedding Photobooth - Khai & Lila",
+  "description": "Mobile-first elegant wedding photobooth web application with multi-frame layouts, live camera, real-time filters, live photo video clips, GIF generation, and instant QR softfile download.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
