@@ -17,6 +17,7 @@ interface EmptyStateProps {
   description?: string;
   actionText?: string;
   onAction?: () => void;
+  action?: React.ReactNode;
   icon?: React.ReactNode;
 }
 
@@ -25,6 +26,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   description,
   actionText,
   onAction,
+  action,
   icon,
 }) => {
   return (
@@ -34,14 +36,16 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       </div>
       <h4 className="font-serif font-bold text-sm text-stone-900 mb-1">{title}</h4>
       {description && <p className="text-xs text-stone-500 max-w-xs mb-4">{description}</p>}
-      {actionText && onAction && (
+      {action ? (
+        action
+      ) : actionText && onAction ? (
         <button
           onClick={onAction}
           className="px-4 py-2 rounded-full border-2 border-black bg-stone-900 text-white text-xs font-bold shadow hover:bg-black transition-all"
         >
           {actionText}
         </button>
-      )}
+      ) : null}
     </div>
   );
 };
@@ -53,7 +57,9 @@ export interface ConfirmDialogProps {
   confirmLabel?: string;
   cancelLabel?: string;
   variant?: 'danger' | 'warning' | 'primary';
-  onConfirm: () => void;
+  isDestructive?: boolean;
+  isLoading?: boolean;
+  onConfirm: () => void | Promise<void>;
   onCancel: () => void;
 }
 

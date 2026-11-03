@@ -150,7 +150,7 @@ export const FrameCanvasEditor: React.FC<FrameCanvasEditorProps> = ({
 
     const nextSlots = [...slots, newSlot];
     onSlotsChange(nextSlots);
-    setSelectedSlotId(newSlot.id);
+    setSelectedSlotId(newSlot.id || null);
     addToast(`Slot #${newSlot.shot_index} berhasil ditambahkan`, 'success');
   };
 
@@ -174,7 +174,7 @@ export const FrameCanvasEditor: React.FC<FrameCanvasEditorProps> = ({
     };
 
     onSlotsChange([...slots, cloned]);
-    setSelectedSlotId(cloned.id);
+    setSelectedSlotId(cloned.id || null);
     addToast('Slot berhasil diduplikasi', 'success');
   };
 
@@ -216,7 +216,7 @@ export const FrameCanvasEditor: React.FC<FrameCanvasEditorProps> = ({
         );
       } else {
         onSlotsChange(detected);
-        setSelectedSlotId(detected[0].id);
+        setSelectedSlotId(detected[0].id || null);
         addToast(
           `Berhasil mendeteksi ${detected.length} slot foto otomatis!`,
           'success'
@@ -545,19 +545,20 @@ export const FrameCanvasEditor: React.FC<FrameCanvasEditorProps> = ({
 
               {/* Layer 3: Interactive Slots with Konva Transformer */}
               <Layer>
-                {slots.map((slot) => {
+                {slots.map((slot, idx) => {
                   const pixels = getSlotPixels(slot);
                   const isSelected = slot.id === selectedSlotId;
+                  const slotId = slot.id || `slot_${idx}`;
 
                   return (
                     <Group
-                      key={slot.id}
-                      id={slot.id}
+                      key={slotId}
+                      id={slotId}
                       ref={(node) => {
                         if (node) {
-                          slotNodeRefs.current.set(slot.id, node);
+                          slotNodeRefs.current.set(slotId, node);
                         } else {
-                          slotNodeRefs.current.delete(slot.id);
+                          slotNodeRefs.current.delete(slotId);
                         }
                       }}
                       x={pixels.centerX}
@@ -568,10 +569,10 @@ export const FrameCanvasEditor: React.FC<FrameCanvasEditorProps> = ({
                       height={pixels.height}
                       rotation={pixels.rotation}
                       draggable={true}
-                      onClick={() => setSelectedSlotId(slot.id)}
-                      onTap={() => setSelectedSlotId(slot.id)}
-                      onDragEnd={(e) => handleDragEnd(slot.id, e.target)}
-                      onTransformEnd={(e) => handleTransformEnd(slot.id, e.target)}
+                      onClick={() => setSelectedSlotId(slotId)}
+                      onTap={() => setSelectedSlotId(slotId)}
+                      onDragEnd={(e) => handleDragEnd(slotId, e.target)}
+                      onTransformEnd={(e) => handleTransformEnd(slotId, e.target)}
                     >
                       {/* Semi-transparent slot rect */}
                       <Rect
@@ -867,8 +868,8 @@ export const FrameCanvasEditor: React.FC<FrameCanvasEditorProps> = ({
               const isSelected = slot.id === selectedSlotId;
               return (
                 <div
-                  key={slot.id}
-                  onClick={() => setSelectedSlotId(slot.id)}
+                  key={slot.id || idx}
+                  onClick={() => setSelectedSlotId(slot.id || null)}
                   className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-sans transition-all cursor-pointer ${
                     isSelected
                       ? 'bg-stone-900 text-white font-bold'

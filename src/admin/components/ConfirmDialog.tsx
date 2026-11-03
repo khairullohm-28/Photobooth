@@ -7,9 +7,12 @@ interface ConfirmDialogProps {
   message: React.ReactNode;
   confirmText?: string;
   cancelText?: string;
+  confirmLabel?: string;
+  cancelLabel?: string;
   isDanger?: boolean;
+  isDestructive?: boolean;
   isLoading?: boolean;
-  onConfirm: () => void;
+  onConfirm: () => void | Promise<void>;
   onCancel: () => void;
 }
 
@@ -19,12 +22,19 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   message,
   confirmText = 'Hapus',
   cancelText = 'Batal',
+  confirmLabel,
+  cancelLabel,
   isDanger = true,
+  isDestructive,
   isLoading = false,
   onConfirm,
   onCancel,
 }) => {
   if (!isOpen) return null;
+
+  const btnConfirm = confirmLabel || confirmText;
+  const btnCancel = cancelLabel || cancelText;
+  const isDangerMode = isDestructive !== undefined ? isDestructive : isDanger;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150">
@@ -45,17 +55,17 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
             onClick={onCancel}
             className="px-4 py-2 rounded-full border-2 border-stone-300 text-xs font-semibold text-stone-700 hover:bg-stone-50 transition-colors"
           >
-            {cancelText}
+            {btnCancel}
           </button>
           <button
             onClick={onConfirm}
             className={`px-4 py-2 rounded-full border-2 border-black text-xs font-bold transition-transform active:scale-95 ${
-              isDanger
+              isDangerMode
                 ? 'bg-rose-600 text-white hover:bg-rose-700'
                 : 'bg-stone-900 text-white hover:bg-black'
             }`}
           >
-            {confirmText}
+            {btnConfirm}
           </button>
         </div>
       </div>

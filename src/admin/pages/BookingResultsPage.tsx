@@ -25,8 +25,6 @@ import {
   FileArchive,
   Image as ImageIcon,
 } from 'lucide-react';
-import JSZip from 'jszip';
-import { saveAs } from 'file-saver';
 import {
   Session,
   SessionAsset,
@@ -457,6 +455,10 @@ export const BookingResultsPage: React.FC<BookingResultsPageProps> = ({
     setZipStatusText('Menyiapkan file ZIP...');
 
     try {
+      const [{ default: JSZip }, { saveAs }] = await Promise.all([
+        import('jszip'),
+        import('file-saver'),
+      ]);
       const zip = new JSZip();
 
       for (let i = 0; i < itemsToZip.length; i++) {

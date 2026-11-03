@@ -3,27 +3,36 @@ import { AdminProfile, AppSettings } from '../types/admin';
 import { AdminService, DEFAULT_APP_SETTINGS } from '../services/adminService';
 import { ToastProvider } from './components/Toast';
 import { AdminLayout } from './components/AdminLayout';
-import { LoginPage } from './pages/LoginPage';
-import { FirstSetupPage } from './pages/FirstSetupPage';
-import { WebsiteAdminPage } from './pages/WebsiteAdminPage';
-import { TeamManagementPage } from './pages/TeamManagementPage';
-import { DashboardPage } from './pages/DashboardPage';
-import { BookingResultsPage } from './pages/BookingResultsPage';
-import { TemplateCategoriesPage } from './pages/TemplateCategoriesPage';
-import { TemplatesListPage } from './pages/TemplatesListPage';
-import { FrameEditorPage } from './pages/FrameEditorPage';
-import { FilterManagementPage } from './pages/FilterManagementPage';
-import { UserEventsPage } from './pages/UserEventsPage';
-import { PrintHistoryPage } from './pages/PrintHistoryPage';
-import { PrinterSettingsPage } from './pages/PrinterSettingsPage';
-import { EventSummaryReportPage } from './pages/reports/EventSummaryReportPage';
-import { PeriodicUsageReportPage } from './pages/reports/PeriodicUsageReportPage';
-import { TemplatesFiltersReportPage } from './pages/reports/TemplatesFiltersReportPage';
-import { PrintsReportPage } from './pages/reports/PrintsReportPage';
-import { StorageReportPage } from './pages/reports/StorageReportPage';
-import { AuditLogReportPage } from './pages/reports/AuditLogReportPage';
-import { PlaceholderPage } from './pages/PlaceholderPage';
 import { Loader2 } from 'lucide-react';
+
+// Lazy-load all admin pages to isolate heavy dependencies (konva, recharts, xlsx, jszip)
+const LoginPage = React.lazy(() => import('./pages/LoginPage').then(m => ({ default: m.LoginPage })));
+const FirstSetupPage = React.lazy(() => import('./pages/FirstSetupPage').then(m => ({ default: m.FirstSetupPage })));
+const WebsiteAdminPage = React.lazy(() => import('./pages/WebsiteAdminPage').then(m => ({ default: m.WebsiteAdminPage })));
+const TeamManagementPage = React.lazy(() => import('./pages/TeamManagementPage').then(m => ({ default: m.TeamManagementPage })));
+const DashboardPage = React.lazy(() => import('./pages/DashboardPage').then(m => ({ default: m.DashboardPage })));
+const BookingResultsPage = React.lazy(() => import('./pages/BookingResultsPage').then(m => ({ default: m.BookingResultsPage })));
+const TemplateCategoriesPage = React.lazy(() => import('./pages/TemplateCategoriesPage').then(m => ({ default: m.TemplateCategoriesPage })));
+const TemplatesListPage = React.lazy(() => import('./pages/TemplatesListPage').then(m => ({ default: m.TemplatesListPage })));
+const FrameEditorPage = React.lazy(() => import('./pages/FrameEditorPage').then(m => ({ default: m.FrameEditorPage })));
+const FilterManagementPage = React.lazy(() => import('./pages/FilterManagementPage').then(m => ({ default: m.FilterManagementPage })));
+const UserEventsPage = React.lazy(() => import('./pages/UserEventsPage').then(m => ({ default: m.UserEventsPage })));
+const PrintHistoryPage = React.lazy(() => import('./pages/PrintHistoryPage').then(m => ({ default: m.PrintHistoryPage })));
+const PrinterSettingsPage = React.lazy(() => import('./pages/PrinterSettingsPage').then(m => ({ default: m.PrinterSettingsPage })));
+const EventSummaryReportPage = React.lazy(() => import('./pages/reports/EventSummaryReportPage').then(m => ({ default: m.EventSummaryReportPage })));
+const PeriodicUsageReportPage = React.lazy(() => import('./pages/reports/PeriodicUsageReportPage').then(m => ({ default: m.PeriodicUsageReportPage })));
+const TemplatesFiltersReportPage = React.lazy(() => import('./pages/reports/TemplatesFiltersReportPage').then(m => ({ default: m.TemplatesFiltersReportPage })));
+const PrintsReportPage = React.lazy(() => import('./pages/reports/PrintsReportPage').then(m => ({ default: m.PrintsReportPage })));
+const StorageReportPage = React.lazy(() => import('./pages/reports/StorageReportPage').then(m => ({ default: m.StorageReportPage })));
+const AuditLogReportPage = React.lazy(() => import('./pages/reports/AuditLogReportPage').then(m => ({ default: m.AuditLogReportPage })));
+const PlaceholderPage = React.lazy(() => import('./pages/PlaceholderPage').then(m => ({ default: m.PlaceholderPage })));
+
+const PageLoader = () => (
+  <div className="w-full min-h-[350px] flex flex-col items-center justify-center p-8 text-stone-500">
+    <Loader2 className="w-8 h-8 text-stone-800 animate-spin mb-2" />
+    <span className="font-serif text-xs text-stone-600">Memuat Halaman...</span>
+  </div>
+);
 
 export const AdminApp: React.FC = () => {
   const [currentAdmin, setCurrentAdmin] = useState<AdminProfile | null>(() =>
@@ -120,14 +129,16 @@ export const AdminApp: React.FC = () => {
   if (currentPath === '/admin/setup') {
     return (
       <ToastProvider>
-        <FirstSetupPage
-          onSetupSuccess={(owner) => {
-            setCurrentAdmin(owner);
-            setHasOwner(true);
-            navigate('/admin/dashboard');
-          }}
-          onBackToLogin={() => navigate('/admin/login')}
-        />
+        <React.Suspense fallback={<PageLoader />}>
+          <FirstSetupPage
+            onSetupSuccess={(owner) => {
+              setCurrentAdmin(owner);
+              setHasOwner(true);
+              navigate('/admin/dashboard');
+            }}
+            onBackToLogin={() => navigate('/admin/login')}
+          />
+        </React.Suspense>
       </ToastProvider>
     );
   }
@@ -136,12 +147,14 @@ export const AdminApp: React.FC = () => {
   if (!currentAdmin || currentPath === '/admin/login') {
     return (
       <ToastProvider>
-        <LoginPage
-          appSettings={appSettings}
-          hasOwner={hasOwner}
-          onLoginSuccess={handleLoginSuccess}
-          onGoToSetup={() => navigate('/admin/setup')}
-        />
+        <React.Suspense fallback={<PageLoader />}>
+          <LoginPage
+            appSettings={appSettings}
+            hasOwner={hasOwner}
+            onLoginSuccess={handleLoginSuccess}
+            onGoToSetup={() => navigate('/admin/setup')}
+          />
+        </React.Suspense>
       </ToastProvider>
     );
   }
@@ -365,7 +378,9 @@ export const AdminApp: React.FC = () => {
         onLogout={handleLogout}
         breadcrumb={breadcrumb}
       >
-        {pageContent}
+        <React.Suspense fallback={<PageLoader />}>
+          {pageContent}
+        </React.Suspense>
       </AdminLayout>
     </ToastProvider>
   );

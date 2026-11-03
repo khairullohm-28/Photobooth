@@ -23,10 +23,12 @@ import { FilterSelectScreen } from './components/screens/FilterSelectScreen';
 import { ResultScreen } from './components/screens/ResultScreen';
 import { EventInactiveScreen } from './components/screens/EventInactiveScreen';
 import { renderFrameComposite } from './utils/composite';
+import { applyLut } from './lib/lut';
 import { createGifFromImages, createWebmFromImages } from './utils/gif';
 import { calculateExpirationDate } from './utils/canvas';
-import { applyLut } from './lib/lut';
-import { AdminApp } from './admin/AdminApp';
+const AdminApp = React.lazy(() =>
+  import('./admin/AdminApp').then((m) => ({ default: m.AdminApp }))
+);
 import { detectDeviceOS } from './utils/device';
 import { Loader2 } from 'lucide-react';
 
@@ -337,7 +339,20 @@ export default function App() {
 
   // If on /admin route, render the complete Admin Portal
   if (isAdminRoute) {
-    return <AdminApp />;
+    return (
+      <React.Suspense
+        fallback={
+          <div className="min-h-screen bg-stone-100 flex flex-col items-center justify-center p-4">
+            <Loader2 className="w-8 h-8 text-stone-900 animate-spin mb-2" />
+            <span className="font-serif text-xs text-stone-600">
+              Memuat Portal Admin...
+            </span>
+          </div>
+        }
+      >
+        <AdminApp />
+      </React.Suspense>
+    );
   }
 
   if (isLoading || !event) {

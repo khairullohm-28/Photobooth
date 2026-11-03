@@ -204,7 +204,7 @@ export const FilterService = {
     if (currentAdmin) {
       await AdminService.recordAuditLog(
         currentAdmin.id,
-        currentAdmin.name,
+        currentAdmin.display_name,
         'filter_create',
         `Menambah filter baru "${newFilter.name}" (LUT 3D ${finalSize}x${finalSize}x${finalSize})`
       );
@@ -254,7 +254,7 @@ export const FilterService = {
     if (currentAdmin) {
       await AdminService.recordAuditLog(
         currentAdmin.id,
-        currentAdmin.name,
+        currentAdmin.display_name,
         'filter_update',
         `Memperbarui pengaturan filter "${updated.name}"`
       );
@@ -286,7 +286,7 @@ export const FilterService = {
     if (currentAdmin) {
       await AdminService.recordAuditLog(
         currentAdmin.id,
-        currentAdmin.name,
+        currentAdmin.display_name,
         'filter_delete',
         `Menghapus filter "${target.name}"`
       );
@@ -319,7 +319,7 @@ export const FilterService = {
     if (currentAdmin) {
       await AdminService.recordAuditLog(
         currentAdmin.id,
-        currentAdmin.name,
+        currentAdmin.display_name,
         'filter_reorder',
         'Mengubah urutan tampilan filter'
       );

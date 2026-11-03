@@ -416,6 +416,10 @@ export const AdminService = {
     return [];
   },
 
+  async recordAuditLog(adminId: string, adminName: string, action: string, details: string, metadata?: any) {
+    return this.logAudit(action, details, adminId, { admin_name: adminName, ...metadata });
+  },
+
   async logAudit(action: string, entity: string, entity_id?: string, meta?: any) {
     const current = this.getCurrentAdmin();
     const logItem: AuditLog = {

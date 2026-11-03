@@ -1,5 +1,3 @@
-import * as XLSX from 'xlsx';
-
 /**
  * Utility for exporting report data to CSV, XLSX, and triggering PDF print.
  */
@@ -31,12 +29,13 @@ export const exportToCsv = (
   URL.revokeObjectURL(url);
 };
 
-export const exportToXlsx = (
+export const exportToXlsx = async (
   filename: string,
   sheetName: string,
   headers: string[],
   rows: (string | number | boolean | null | undefined)[][]
 ) => {
+  const XLSX = await import('xlsx');
   const aoa = [headers, ...rows];
   const ws = XLSX.utils.aoa_to_sheet(aoa);
 

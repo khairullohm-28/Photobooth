@@ -12,8 +12,8 @@ import {
   EventSettings,
   ScreenBackground,
   ScreenKey,
-  AdminProfile,
 } from '../types/photobooth';
+import { AdminProfile } from '../types/admin';
 import { SEED_EVENT, SEED_SETTINGS, SEED_BACKGROUNDS } from '../data/seedData';
 
 const STORAGE_EVENTS_KEY = 'wedding_user_events';
@@ -503,7 +503,7 @@ export const EventService = {
     if (currentAdmin) {
       await AdminService.recordAuditLog(
         currentAdmin.id,
-        currentAdmin.name,
+        currentAdmin.display_name,
         'event_create',
         `Membuat user acara baru "${newEvent.name}" (Slug: ${newEvent.slug}, Kode Prefix: ${newEvent.code_prefix})`
       );
@@ -603,7 +603,7 @@ export const EventService = {
     if (currentAdmin) {
       await AdminService.recordAuditLog(
         currentAdmin.id,
-        currentAdmin.name,
+        currentAdmin.display_name,
         'event_update',
         `Memperbarui data acara "${updatedEvent.name}"`
       );
@@ -660,7 +660,7 @@ export const EventService = {
     if (currentAdmin) {
       await AdminService.recordAuditLog(
         currentAdmin.id,
-        currentAdmin.name,
+        currentAdmin.display_name,
         'event_delete',
         `Menghapus user acara "${target.name}" beserta pengaturan dan background-nya`
       );
